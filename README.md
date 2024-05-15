@@ -85,6 +85,7 @@ GET /supported-voices
 To "interrupt" the avatar from an ongoing sentence, send an `avatarAction` = 1.
 
 ```javascript
+const encoder = new TextEncoder();
 const data = encoder.encode(JSON.stringify({ message: '', avatarAction: 1 }));
 roomRef.current?.localParticipant?.publishData(data, { reliable: true });
 ```
