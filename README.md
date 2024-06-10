@@ -6,7 +6,7 @@ If you're wondering how to integrate with the avatar you're in the right place!
 
 The API was created using Golang and we use [LikeKit](https://livekit.io/) for streaming audio, video, and data over the network. LiveKit offers SDKs in several languages to facilitate integration.
 
-Inside this folder there's an example of a web client integrated using the JS SDK. More examples will be added soon, feel free to contribute!
+Inside this folder there are a few examples of a web client integrated using the JS SDK. More examples will be added soon, feel free to contribute!
 
 ## Instructions
 
