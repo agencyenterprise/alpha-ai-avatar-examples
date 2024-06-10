@@ -1,0 +1,11 @@
+{
+  "extends": [
+    "next/core-web-vitals",
+    "@ae-studio/eslint-config/typescript",
+    "@ae-studio/eslint-config/prettier"
+  ],
+  "rules": {
+    "no-case-declarations": "off",
+    "@next/next/no-page-custom-font": "off"
+  }
+}
