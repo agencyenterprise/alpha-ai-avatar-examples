@@ -81,7 +81,7 @@ Use [LiveKit's Publish Data](https://docs.livekit.io/realtime/client/data-messag
 
 ```javascript
 const encoder = new TextEncoder();
-const data = encoder.encode(JSON.stringify({ message: 'Hello, World!' }));
+const data = encoder.encode(JSON.stringify({ message: "Hello, World!" }));
 room.localParticipant.publishData(data, { reliable: true });
 ```
 
@@ -91,10 +91,10 @@ To change the voice and voice style of an avatar using one of Azure's supported 
 const encoder = new TextEncoder();
 const data = encoder.encode(
   JSON.stringify({
-    message: 'Hello, World!',
-    voiceName: 'en-US-DavisNeural',
-    voiceStyle: 'angry',
-  }),
+    message: "Hello, World!",
+    voiceName: "en-US-DavisNeural",
+    voiceStyle: "angry",
+  })
 );
 room.localParticipant.publishData(data, { reliable: true });
 ```
@@ -105,14 +105,87 @@ Note that not all voices support `voiceStyle`. You can retrieve a list of availa
 GET /supported-voices
 ```
 
-### 5. Send an action to the avatar to stop talking
+### 5. Send an action to the avatar to stop talking (Optional)
 
 To "interrupt" the avatar from an ongoing sentence, send an `avatarAction` = 1.
 
 ```javascript
 const encoder = new TextEncoder();
-const data = encoder.encode(JSON.stringify({ message: '', avatarAction: 1 }));
+const data = encoder.encode(JSON.stringify({ message: "", avatarAction: 1 }));
 roomRef.current?.localParticipant?.publishData(data, { reliable: true });
+```
+
+### 6. Change prosody (Optional)
+
+You can use the prosody config to specify changes to pitch, contour, range, rate, and volume for the text to speech output. For a comprehensive list of possible values for each attribute, please refer to the [Azure documentation](https://learn.microsoft.com/en-us/azure/ai-services/speech-service/speech-synthesis-markup-voice#adjust-prosody)
+
+```javascript
+const encoder = new TextEncoder();
+const data = encoder.encode(
+  JSON.stringify({
+    message: "Hello, World!",
+    prosody: {
+      contour: "(0%,+20Hz) (10%,-2st) (40%,+10Hz)",
+      pitch: "high",
+      range: "50%",
+      rate: "x-fast",
+      volume: "loud",
+    },
+  })
+);
+roomRef.current?.localParticipant?.publishData(data, { reliable: true });
+```
+
+### 7. Change language (Optional)
+
+By default, all avatars are set to speak English. If you intend for your avatar to speak another language, first verify that the required language is available in Azure and that the `voiceName` used by the avatar supports multilingual.
+
+[Supported Multilingual voices](https://learn.microsoft.com/en-us/azure/ai-services/speech-service/speech-synthesis-markup-voice#multilingual-voices-with-the-lang-element)
+| Voice |
+| :-------------------------------------- |
+| `en-US-AndrewMultilingualNeural` (Male) |
+| `en-US-AvaMultilingualNeural` (Female) |
+| `en-US-BrianMultilingualNeural` (Male) |
+| `en-US-EmmaMultilingualNeural` (Female) |
+
+If all requirements are met, you just need to pass the `multilingualLang` parameter in the encoded text.
+
+```javascript
+const encoder = new TextEncoder();
+const data = encoder.encode(
+  JSON.stringify({
+    message: "Hello, World!",
+    voiceName: "en-US-AndrewMultilingualNeural",
+    multilingualLang: "es-ES",
+  })
+);
+room.localParticipant.publishData(data, { reliable: true });
+```
+
+### 8. SSML support (Optional)
+
+We support the complete change of SSML `voice` element, which provides a vast set of changes to the avatar's voice, such as support for math, pause, silence...
+
+```javascript
+const encoder = new TextEncoder();
+const data = encoder.encode(
+  JSON.stringify({
+    multilingualLang: "en-US",
+    ssmlVoiceConfig:
+      "<voice name='en-US-AndrewMultilingualNeural'><mstts:express-as style='angry'><mstts:viseme type='FacialExpression'>Hello, World!</mstts:viseme></mstts:express-as></voice>",
+  })
+);
+room.localParticipant.publishData(data, { reliable: true });
+```
+
+For the avatar to work properly you must provide `mstt:viseme` with the `FacialExpression` type.
+
+```javascript
+<mstts:viseme type="Facial Expression"></mstts:viseme>
+```
+
+```
+Note: When using this feature, the only other available property you can use is `multilingualLang`.
 ```
 
 ## Test
