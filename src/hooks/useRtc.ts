@@ -10,6 +10,7 @@ let useRtc = () => {
       ],
     }),
   );
+  const isCreatingOfferRef = useRef(false);
 
   const [video, setVideo] = useState<MediaStream>();
   const [audio, setAudio] = useState<MediaStream>();
@@ -26,15 +27,11 @@ let useRtc = () => {
     }
 
     async function handleIceCandidate(event: RTCPeerConnectionIceEvent) {
-      if (event.candidate === null) {
+      if (!event.candidate) {
         const response = await fetch('http://localhost:4000/sdp', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            offer: pc.localDescription,
-          }),
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ offer: pc.localDescription }),
         });
 
         const { answer } = await response.json();
@@ -45,10 +42,12 @@ let useRtc = () => {
     pc.addEventListener('track', handleTrack);
     pc.addEventListener('icecandidate', handleIceCandidate);
 
-    if (pc.getTransceivers().length === 0) {
-      pc.addTransceiver('video', { direction: 'sendrecv' });
-      pc.addTransceiver('audio', { direction: 'sendrecv' });
-      pc.createOffer().then((d) => pc.setLocalDescription(d));
+    if (!isCreatingOfferRef.current) {
+      isCreatingOfferRef.current = true;
+      pc.createOffer({
+        offerToReceiveVideo: true,
+        offerToReceiveAudio: true,
+      }).then((offer) => pc.setLocalDescription(offer));
     }
 
     return () => {
@@ -58,12 +57,12 @@ let useRtc = () => {
   }, []);
 
   return { video, audio };
-}
+};
 
 if (typeof window === 'undefined') {
   useRtc = () => {
     return { video: undefined, audio: undefined };
-  }
+  };
 }
 
 export { useRtc };
