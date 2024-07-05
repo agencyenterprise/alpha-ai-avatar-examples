@@ -42,13 +42,8 @@ let useRtc = () => {
       }
     }
 
-    function handleIceConnectionStateChange() {
-      console.log('ice connection state: ', pc.iceConnectionState);
-    }
-
     pc.addEventListener('track', handleTrack);
     pc.addEventListener('icecandidate', handleIceCandidate);
-    pc.addEventListener('iceconnectionstatechange', handleIceConnectionStateChange);
 
     if (pc.getTransceivers().length === 0) {
       pc.addTransceiver('video', { direction: 'sendrecv' });
@@ -59,7 +54,6 @@ let useRtc = () => {
     return () => {
       pc.removeEventListener('track', handleTrack);
       pc.removeEventListener('icecandidate', handleIceCandidate);
-      pc.removeEventListener('iceconnectionstatechange', handleIceConnectionStateChange);
     };
   }, []);
 
