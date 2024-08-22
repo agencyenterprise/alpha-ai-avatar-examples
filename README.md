@@ -57,7 +57,7 @@ POST /rooms
 
 | Body       | Type  | Description                                  |
 | :--------- | :---- | :------------------------------------------- |
-| `avatarId` | `int` | **Required**. ID that identifies your avatar |
+| `avatarId` | `int` | **Optional**. ID that identifies your avatar |
 
 #### Response
 
